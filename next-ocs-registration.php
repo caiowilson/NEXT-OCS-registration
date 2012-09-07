@@ -9,52 +9,50 @@ Author: Caio Wilson
 */
 
 
-add_filter('login_redirect', 'next_ocs_login');
+add_filter('login_redirect', 'next_ocs_login', 10, 3);
 
 function next_ocs_login(){
-	
-	if($_GET['from_ocs']){
 
-		return home_url('/conferencias/');
-			
+	if(isset($_COOKIE['from_ocs'])){
+	
+		return '/conferencias';
+	
 	}
-	else if($_COOKIE['from_ocs'] == true){
+	/* if(isset($_GET['from_ocs'])){
+		echo 'inside first if    ';
+		return home_url('/conferencias');
 
-		return home_url('/conferencias/');
 
 	}
-
-
-}
-
-add_filter('wp_signup_location', 'next_ocs_register');
-
-function next_ocs_register(){
-//if($_COOKIE['from_ocs'] ($_GET['from_ocs'] ))
-	
-	setcookie('from_ocs','true', time()+3600 );
-	
-	/* if($_GET['action'] = 'register' && $_GET['from_ocs'] == 'true'){
-		setcookie('from_ocs','true', time()+3600 );
+	else if(!isset($_GET['from_ocs'])){
+		echo 'inside first else    ';
+		return home_url();
 	} */
-	return site_url('wp-signup.php');
+	/* else if($_COOKIE['from_ocs']){
+
+		return home_url('/conferencias');
+
+	}
+	else {
+		echo 'CAIU NO ULTIMO ELSE';
+		return home_url();
+	}
+ */
+
 }
 
-/* add_action('login_init', 'ocs_login_init');
 
-function ocs_login_init(){
-	//echo 'TESTE'; 
-	if($_REQUEST['action'] == 'register' && $_REQUEST['from_ocs'] == 'true'){
-		
-		setcookie('from_ocs','true', 0 );
+//adiciona a funcao no hook do bp_before_register_page
+add_action('bp_before_register_page', 'ocs_before_register_page');
+
+/**
+ * função que seta o cookie no momento de registro se o user vier do OCS
+ */
+function ocs_before_register_page(){
+	if($_GET['from_ocs']){
+		setcookie('from_ocs', 'true', 0, '/');
 	}
-} */
-
-add_action('after_signup_form', 'ocs_signup');
-
-function ocs_signup(){
-// 	setcookie('from_ocs','true', time()+3600 );
-	echo 'MALDITO HOOK QUE NAO VAI';
+ 	
 }
 
 ?>
