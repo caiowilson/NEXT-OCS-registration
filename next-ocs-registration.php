@@ -4,45 +4,37 @@
  Plugin Name: Next OCS Registration
 
 Description: Integra o registro de usuários do OCS e do WP.
-Version: 1.12
+Version: 1
 Author: Caio Wilson
 */
 
 
-add_filter('login_redirect', 'next_ocs_login', 10, 3);
-
-function next_ocs_login(){
-
-	if(isset($_COOKIE['from_ocs'])){
-	
-		return '/conferencias';
-	
-	}
-	/* if(isset($_GET['from_ocs'])){
-		echo 'inside first if    ';
-		return home_url('/conferencias');
+add_filter('login_redirect', 'next_ocs_login' , 10, 3);
 
 
-	}
-	else if(!isset($_GET['from_ocs'])){
-		echo 'inside first else    ';
-		return home_url();
-	} */
-	/* else if($_COOKIE['from_ocs']){
-
-		return home_url('/conferencias');
-
-	}
-	else {
-		echo 'CAIU NO ULTIMO ELSE';
-		return home_url();
-	}
+/**
+ * retorna para o wp a url do ocs após login simples ou login apos registro vindo do ocs.
  */
+function next_ocs_login($redirect_to){
+
+	
+	if(isset($_GET['from_ocs']) || isset($_COOKIE['from_ocs'])){
+		return site_url('/conferencias/');
+	}
+	
+	else if(isset($redirect_to)){
+		echo $redirect_to;
+		return $redirect_to;
+	}
+	else{
+		return site_url();
+	}
+	
 
 }
 
 
-//adiciona a funcao no hook do bp_before_register_page
+//adiciona a funcao no hook do bp_before_register_page (registro do bp)
 add_action('bp_before_register_page', 'ocs_before_register_page');
 
 /**
