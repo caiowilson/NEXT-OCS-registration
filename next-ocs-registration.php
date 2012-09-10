@@ -9,33 +9,46 @@ Author: Caio Wilson
 */
 
 
-add_filter('login_redirect', 'next_ocs_login' , 10, 3);
+
+
+function wp_head_ocs_redirection(){
+	global $post;
+	//print_r ($post->post_title);
+	if($post->post_title == 'conferencias'){
+		setcookie('from_ocs', 'true', time()-3600, '/');
+		wp_redirect('http://www.next.icict.fiocruz.br/conferencias/');
+	}
+}
+//add_action('wp_head', 'wp_head_ocs_redirection');
 
 
 /**
  * retorna para o wp a url do ocs após login simples ou login apos registro vindo do ocs.
  */
-function next_ocs_login($redirect_to){
-
+function next_ocs_login($redirect_to, $request){
 	
 	if(isset($_GET['from_ocs']) || isset($_COOKIE['from_ocs'])){
+		
 		return site_url('/conferencias/');
+		
 	}
 	
 	else if(isset($redirect_to)){
-		echo $redirect_to;
+		
 		return $redirect_to;
+		
 	}
 	else{
-		return site_url();
+		
+		return home_url();
+		
 	}
 	
 
 }
+add_filter('login_redirect', 'next_ocs_login' , 10, 3);
 
 
-//adiciona a funcao no hook do bp_before_register_page (registro do bp)
-add_action('bp_before_register_page', 'ocs_before_register_page');
 
 /**
  * função que seta o cookie no momento de registro se o user vier do OCS
@@ -46,5 +59,6 @@ function ocs_before_register_page(){
 	}
  	
 }
-
+//adiciona a funcao no hook do bp_before_register_page (registro do bp)
+add_action('bp_before_register_page', 'ocs_before_register_page');
 ?>
